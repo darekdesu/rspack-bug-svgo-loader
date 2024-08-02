@@ -1,6 +1,8 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import { InjectManifest } from "workbox-webpack-plugin";
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isRunningWebpack = !!process.env.WEBPACK;
@@ -18,7 +20,13 @@ const config = {
   entry: {
     main: "./src/index",
   },
-  plugins: [new HtmlWebpackPlugin()],
+  plugins: [
+    new HtmlWebpackPlugin(),
+    new InjectManifest({
+      swSrc: "./src/sw.ts",
+      swDest: "./static/sw.js"
+    })
+  ],
   output: {
     clean: true,
     path: isRunningWebpack

@@ -12,12 +12,8 @@ function render() {
     const el = document.createElement('div')
     el.classList.add('text')
     document.getElementsByTagName('body')[0].appendChild(el)
-    el.innerHTML = 'hello, world'
+    el.innerHTML = 'hello, world';
 }
-
-}),
-"./src/render.css": (function (module, __unused_webpack_exports, __webpack_require__) {
-__webpack_require__.r(module.exports = {});
 
 
 }),

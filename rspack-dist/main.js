@@ -171,7 +171,7 @@ __webpack_require__.r = function(exports) {
 // webpack/runtime/rspack_version
 (() => {
 __webpack_require__.rv = function () {
-	return "1.0.0-alpha.3";
+	return "1.0.0-beta.2";
 };
 
 })();
@@ -203,7 +203,49 @@ __webpack_require__.rv = function () {
 (() => {
 var installedChunks = {"main": 0,};
 var uniqueName = "rspack-repro";
-// loadCssChunkData is unnecessary
+function handleCssComposes(exports, composes) {
+  for (var i = 0; i < composes.length; i += 3) {
+    var moduleId = composes[i];
+    var composeFrom = composes[i + 1];
+    var composeVar = composes[i + 2];
+    var composedId = __webpack_require__(composeFrom)[composeVar];
+    exports[moduleId] = exports[moduleId] + " " + composedId
+  }
+}
+var loadCssChunkData = (target, link, chunkId) => {
+var data, token = "", token2 = "", token3 = "", exports = {}, composes = [], name = "--webpack-" + uniqueName + "-" + chunkId, i, cc = 1, composes = {};
+try {
+  if(!link) link = loadStylesheet(chunkId);
+  var cssRules = link.sheet.cssRules || link.sheet.rules;
+  var j = cssRules.length - 1;
+  while(j > -1 && !data) {
+    var style = cssRules[j--].style;
+    if(!style) continue;
+    data = style.getPropertyValue(name);
+  }
+} catch(_) {}
+if(!data) {
+  data = getComputedStyle(document.head).getPropertyValue(name);
+}
+if(!data) return [];
+// css head data compression is disabled
+for(i = 0; cc; i++) {
+  cc = data.charCodeAt(i);
+  if(cc == 58) { token2 = token; token = ""; }
+  else if(cc == 47) { token = token.replace(/^_/, ""); token2 = token2.replace(/^_/, ""); if (token3) { composes.push(token2, token3, token) } else { exports[token2] = exports[token2] === undefined ? token : exports[token2] + " " + token } token = ""; token2 = ""; token3 = "" }
+  else if(cc == 38) { __webpack_require__.r(exports); }
+  else if(!cc || cc == 44) { token = token.replace(/^_/, ""); target[token] = ((exports, composes, module) => {
+handleCssComposes(exports, composes)
+module.exports = exports;
+}).bind(null, exports, composes); token = ""; token2 = ""; exports = {}; composes = [] }
+  else if(cc == 92) { token += data[++i] }
+  else if(cc == 64) { token3 = token; token = ""; }
+  else { token += data[i]; }
+}
+installedChunks[chunkId] = 0;
+
+
+}
 var loadingAttribute = "data-webpack-loading";
 var loadStylesheet = function (chunkId, url, done, hmr, fetchPriority) {
 	var link,
@@ -264,6 +306,7 @@ var loadStylesheet = function (chunkId, url, done, hmr, fetchPriority) {
 	hmr ? document.head.insertBefore(link, hmr) : needAttach && document.head.appendChild(link);
 	return link;
 };
+// no initial css
 __webpack_require__.f.css = function (chunkId, promises, fetchPriority) {
 	// css chunk loading
 	var installedChunkData = __webpack_require__.o(installedChunks, chunkId)
@@ -308,7 +351,7 @@ __webpack_require__.f.css = function (chunkId, promises, fetchPriority) {
 								error.request = realSrc;
 								installedChunkData[1](error);
 							} else {
-								// loadCssChunkData(__webpack_require__.m, link, chunkId);
+								loadCssChunkData(__webpack_require__.m, link, chunkId);
 								installedChunkData[0]();
 							}
 						}
@@ -319,24 +362,6 @@ __webpack_require__.f.css = function (chunkId, promises, fetchPriority) {
 		}
 	}
 };
-// TODO: different with webpack
-// webpack using `loadCssChunkData` and detect css variables to add install chunk.
-// Because rspack the css chunk is always generate one js chunk, so here use js chunk to add install chunk.
-var loadCssChunkCallback = function (parentChunkLoadingFunction, data) {
-	var chunkIds = data[0];
-	if (parentChunkLoadingFunction) parentChunkLoadingFunction(data);
-	for (var i = 0; i < chunkIds.length; i++) {
-		if (installedChunks[chunkIds[i]] === undefined) {
-			installedChunks[chunkIds[i]] = 0;
-		}
-	}
-};
-var chunkLoadingGlobal = self['webpackChunkrspack_repro'] = self['webpackChunkrspack_repro'] || [];
-chunkLoadingGlobal.forEach(loadCssChunkCallback.bind(null, 0));
-chunkLoadingGlobal.push = loadCssChunkCallback.bind(
-	null,
-	chunkLoadingGlobal.push.bind(chunkLoadingGlobal)
-);
 
 })();
 // webpack/runtime/jsonp_chunk_loading
@@ -441,7 +466,7 @@ chunkLoadingGlobal.push = webpackJsonpCallback.bind(
 })();
 // webpack/runtime/rspack_unique_id
 (() => {
-__webpack_require__.ruid = "bundler=rspack@1.0.0-alpha.3";
+__webpack_require__.ruid = "bundler=rspack@1.0.0-beta.2";
 
 })();
 /************************************************************************/
